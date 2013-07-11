@@ -87,7 +87,8 @@
     contentView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
     [view addSubview:contentView];
     
-    CGFloat panelWidth = DIGIT_WIDTH*4+DIGIT_SPACING*3;
+    //CGFloat panelWidth = DIGIT_WIDTH*4+DIGIT_SPACING*3;
+	CGFloat panelWidth = view.frame.size.width;
     if (_simple) {
         UIView *digitPanel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, panelWidth, DIGIT_HEIGHT)];
         digitPanel.frame = CGRectOffset(digitPanel.frame, (contentView.bounds.size.width-digitPanel.bounds.size.width)/2, PROMPT_HEIGHT);
@@ -97,19 +98,20 @@
         UIImage *markerImage = [UIImage imageNamed:@"papasscode_marker"];
 		UIImage *backgroundImage;
 		if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
-			backgroundImage = [UIImage imageNamed:@"papasscode_marker_7"];
+			backgroundImage = [UIImage imageNamed:@"papasscode_background_7"];
 		} else {
-			markerImage = [UIImage imageNamed:@"papasscode_background"];
+			backgroundImage = [UIImage imageNamed:@"papasscode_background"];
 		}
 		
-        CGFloat xLeft = 0;
+        CGFloat xLeft = ([digitPanel frame].size.width - (backgroundImage.size.width*4 + DIGIT_SPACING*3)) / 2;
         for (int i=0;i<4;i++) {
             UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
             backgroundImageView.frame = CGRectOffset(backgroundImageView.frame, xLeft, 0);
             [digitPanel addSubview:backgroundImageView];
             digitImageViews[i] = [[UIImageView alloc] initWithImage:markerImage];
             digitImageViews[i].autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-            digitImageViews[i].frame = CGRectOffset(digitImageViews[i].frame, backgroundImageView.frame.origin.x+MARKER_X, MARKER_Y);
+            //digitImageViews[i].frame = CGRectOffset(digitImageViews[i].frame, backgroundImageView.frame.origin.x+MARKER_X, MARKER_Y);
+			digitImageViews[i].center = backgroundImageView.center;
             [digitPanel addSubview:digitImageViews[i]];
             xLeft += DIGIT_SPACING + backgroundImage.size.width;
         }
