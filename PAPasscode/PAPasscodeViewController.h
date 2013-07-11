@@ -53,6 +53,8 @@ typedef enum {
 @property (strong) NSString *changePrompt;
 @property (strong) NSString *message;
 
+@property (assign) BOOL showNavigationBar;
+
 - (id)initForAction:(PasscodeAction)action;
 
 @end
