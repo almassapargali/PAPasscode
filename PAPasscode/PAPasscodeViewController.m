@@ -94,8 +94,14 @@
         digitPanel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         [contentView addSubview:digitPanel];
         
-        UIImage *backgroundImage = [UIImage imageNamed:@"papasscode_background"];
         UIImage *markerImage = [UIImage imageNamed:@"papasscode_marker"];
+		UIImage *backgroundImage;
+		if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+			backgroundImage = [UIImage imageNamed:@"papasscode_marker_7"];
+		} else {
+			markerImage = [UIImage imageNamed:@"papasscode_background"];
+		}
+		
         CGFloat xLeft = 0;
         for (int i=0;i<4;i++) {
             UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
