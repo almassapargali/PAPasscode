@@ -68,27 +68,45 @@
     return self;
 }
 
-- (void)loadView {
+/*- (void)loadView {
     UIView *view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].applicationFrame];
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 
+	
+    
+    self.view = view;
+}*/
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+	
+	if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+		[self setEdgesForExtendedLayout:UIExtendedEdgeNone];
+	}
+	
+	CGFloat navbarHeight;
+	
 	if ([self showNavigationBar]) {
-		UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, view.bounds.size.width, NAVBAR_HEIGHT)];
+		UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, NAVBAR_HEIGHT)];
 		navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		navigationBar.items = @[self.navigationItem];
-		[view addSubview:navigationBar];
+		[[self view] addSubview:navigationBar];
+		
+		navbarHeight = NAVBAR_HEIGHT;
+	} else {
+		navbarHeight = 0;
 	}
     
-    contentView = [[UIView alloc] initWithFrame:CGRectMake(0, NAVBAR_HEIGHT, view.bounds.size.width, view.bounds.size.height-NAVBAR_HEIGHT)];
+    contentView = [[UIView alloc] initWithFrame:CGRectMake(0, navbarHeight, self.view.bounds.size.width, self.view.bounds.size.height-navbarHeight)];
     contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     if (_backgroundView) {
         [contentView addSubview:_backgroundView];
     }
     contentView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
-    [view addSubview:contentView];
+    [[self view] addSubview:contentView];
     
     //CGFloat panelWidth = DIGIT_WIDTH*4+DIGIT_SPACING*3;
-	CGFloat panelWidth = view.frame.size.width;
+	CGFloat panelWidth = self.view.frame.size.width;
     if (_simple) {
         UIView *digitPanel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, panelWidth, DIGIT_HEIGHT)];
         digitPanel.frame = CGRectOffset(digitPanel.frame, (contentView.bounds.size.width-digitPanel.bounds.size.width)/2, PROMPT_HEIGHT);
@@ -140,7 +158,7 @@
     passcodeTextField.keyboardType = UIKeyboardTypeNumberPad;
     [passcodeTextField addTarget:self action:@selector(passcodeChanged:) forControlEvents:UIControlEventEditingChanged];
     [contentView addSubview:passcodeTextField];
-
+	
     promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PROMPT_HEIGHT)];
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     promptLabel.backgroundColor = [UIColor clearColor];
@@ -171,7 +189,7 @@
     messageLabel.numberOfLines = 0;
 	messageLabel.text = _message;
     [contentView addSubview:messageLabel];
-        
+	
     UIImage *failedBg = [[UIImage imageNamed:@"papasscode_failed_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, FAILED_LCAP, 0, FAILED_RCAP)];
     failedImageView = [[UIImageView alloc] initWithImage:failedBg];
     failedImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
@@ -192,12 +210,6 @@
 #endif
     failedAttemptsLabel.hidden = YES;
     [contentView addSubview:failedAttemptsLabel];
-    
-    self.view = view;
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
     
     if ([_delegate respondsToSelector:@selector(PAPasscodeViewControllerDidCancel:)]) {
         if (_simple) {
