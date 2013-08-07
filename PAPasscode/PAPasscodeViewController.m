@@ -68,21 +68,8 @@
     return self;
 }
 
-/*- (void)loadView {
-    UIView *view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].applicationFrame];
-    view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-
-	
-    
-    self.view = view;
-}*/
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-	
-	if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
-		[self setEdgesForExtendedLayout:UIRectEdgeNone];
-	}
 	
 	CGFloat navbarHeight;
 	
@@ -105,7 +92,6 @@
     contentView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
     [[self view] addSubview:contentView];
     
-    //CGFloat panelWidth = DIGIT_WIDTH*4+DIGIT_SPACING*3;
 	CGFloat panelWidth = self.view.frame.size.width;
     if (_simple) {
         UIView *digitPanel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, panelWidth, DIGIT_HEIGHT)];
@@ -128,7 +114,6 @@
             [digitPanel addSubview:backgroundImageView];
             digitImageViews[i] = [[UIImageView alloc] initWithImage:markerImage];
             digitImageViews[i].autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-            //digitImageViews[i].frame = CGRectOffset(digitImageViews[i].frame, backgroundImageView.frame.origin.x+MARKER_X, MARKER_Y);
 			digitImageViews[i].center = backgroundImageView.center;
             [digitPanel addSubview:digitImageViews[i]];
             xLeft += DIGIT_SPACING + backgroundImage.size.width;
@@ -162,10 +147,16 @@
     promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PROMPT_HEIGHT)];
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     promptLabel.backgroundColor = [UIColor clearColor];
-    promptLabel.textColor = [UIColor colorWithRed:0.30 green:0.34 blue:0.42 alpha:1.0];
-    promptLabel.font = [UIFont boldSystemFontOfSize:17];
-    promptLabel.shadowColor = [UIColor whiteColor];
-    promptLabel.shadowOffset = CGSizeMake(0, 1);
+	
+	if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
+		promptLabel.font = [UIFont systemFontOfSize:12];
+		promptLabel.textColor = [UIColor blackColor];
+	} else {
+		promptLabel.font = [UIFont boldSystemFontOfSize:17];
+		promptLabel.textColor = [UIColor colorWithRed:0.30 green:0.34 blue:0.42 alpha:1.0];
+		promptLabel.shadowColor = [UIColor whiteColor];
+		promptLabel.shadowOffset = CGSizeMake(0, 1);
+	}
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
     promptLabel.textAlignment = UITextAlignmentCenter;
 #else
