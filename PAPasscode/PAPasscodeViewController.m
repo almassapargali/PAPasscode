@@ -81,7 +81,7 @@
     [super viewDidLoad];
 	
 	if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f) {
-		[self setEdgesForExtendedLayout:UIExtendedEdgeNone];
+		[self setEdgesForExtendedLayout:UIRectEdgeNone];
 	}
 	
 	CGFloat navbarHeight;
