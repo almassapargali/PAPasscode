@@ -9,7 +9,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PAPasscodeViewController.h"
 
-#define NAVBAR_HEIGHT   44
 #define PROMPT_HEIGHT   74
 #define DIGIT_SPACING   10
 #define DIGIT_WIDTH     61
@@ -63,41 +62,22 @@
         }
         self.modalPresentationStyle = UIModalPresentationFormSheet;
         _simple = YES;
-		_showNavigationBar = NO;
     }
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-	
-	CGFloat navbarHeight;
-	
-	if ([self showNavigationBar]) {
-		UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, NAVBAR_HEIGHT)];
-		navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-		navigationBar.items = @[self.navigationItem];
-		[[self view] addSubview:navigationBar];
-		
-		navbarHeight = NAVBAR_HEIGHT;
-	} else {
-		navbarHeight = 0;
-	}
     
-    contentView = [[UIView alloc] initWithFrame:CGRectMake(0, navbarHeight, self.view.bounds.size.width, self.view.bounds.size.height-navbarHeight)];
-    contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    if (_backgroundView) {
-        [contentView addSubview:_backgroundView];
-    }
-    contentView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
-    [[self view] addSubview:contentView];
+    self.view.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
+    self.edgesForExtendedLayout = UIRectEdgeNone;
     
 	CGFloat panelWidth = self.view.frame.size.width;
     if (_simple) {
         UIView *digitPanel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, panelWidth, DIGIT_HEIGHT)];
-        digitPanel.frame = CGRectOffset(digitPanel.frame, (contentView.bounds.size.width-digitPanel.bounds.size.width)/2, PROMPT_HEIGHT);
+        digitPanel.frame = CGRectOffset(digitPanel.frame, (self.view.bounds.size.width-digitPanel.bounds.size.width)/2, PROMPT_HEIGHT);
         digitPanel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-        [contentView addSubview:digitPanel];
+        [self.view addSubview:digitPanel];
         
         UIImage *markerImage = [UIImage imageNamed:@"papasscode_marker"];
 		UIImage *backgroundImage;
@@ -123,7 +103,7 @@
     } else {
         UIView *passcodePanel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, panelWidth, DIGIT_HEIGHT)];
         passcodePanel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-        passcodePanel.frame = CGRectOffset(passcodePanel.frame, (contentView.bounds.size.width-passcodePanel.bounds.size.width)/2, PROMPT_HEIGHT);
+        passcodePanel.frame = CGRectOffset(passcodePanel.frame, (self.view.bounds.size.width-passcodePanel.bounds.size.width)/2, PROMPT_HEIGHT);
         passcodePanel.frame = CGRectInset(passcodePanel.frame, TEXTFIELD_MARGIN, TEXTFIELD_MARGIN);
         passcodePanel.layer.borderColor = [UIColor colorWithRed:0.65 green:0.67 blue:0.70 alpha:1.0].CGColor;
         passcodePanel.layer.borderWidth = 1.0;
@@ -133,7 +113,7 @@
         passcodePanel.layer.shadowOpacity = 1.0;
         passcodePanel.layer.shadowRadius = 1.0;
         passcodePanel.backgroundColor = [UIColor whiteColor];
-        [contentView addSubview:passcodePanel];
+        [self.view addSubview:passcodePanel];
         passcodeTextField = [[UITextField alloc] initWithFrame:CGRectInset(passcodePanel.frame, 6, 6)];
     }
     passcodeTextField.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
@@ -142,9 +122,9 @@
     passcodeTextField.textColor = [UIColor colorWithRed:0.23 green:0.33 blue:0.52 alpha:1.0];
     passcodeTextField.keyboardType = UIKeyboardTypeNumberPad;
     [passcodeTextField addTarget:self action:@selector(passcodeChanged:) forControlEvents:UIControlEventEditingChanged];
-    [contentView addSubview:passcodeTextField];
+    [self.view addSubview:passcodeTextField];
 	
-    promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PROMPT_HEIGHT)];
+    promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, PROMPT_HEIGHT)];
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     promptLabel.backgroundColor = [UIColor clearColor];
 	
@@ -163,9 +143,9 @@
     promptLabel.textAlignment = NSTextAlignmentCenter;
 #endif
     promptLabel.numberOfLines = 0;
-    [contentView addSubview:promptLabel];
+    [self.view addSubview:promptLabel];
     
-    messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, PROMPT_HEIGHT+DIGIT_HEIGHT, contentView.bounds.size.width, MESSAGE_HEIGHT)];
+    messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, PROMPT_HEIGHT+DIGIT_HEIGHT, self.view.bounds.size.width, MESSAGE_HEIGHT)];
     messageLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     messageLabel.backgroundColor = [UIColor clearColor];
     messageLabel.textColor = [UIColor colorWithRed:0.30 green:0.34 blue:0.42 alpha:1.0];
@@ -179,13 +159,13 @@
 #endif
     messageLabel.numberOfLines = 0;
 	messageLabel.text = _message;
-    [contentView addSubview:messageLabel];
+    [self.view addSubview:messageLabel];
 	
     UIImage *failedBg = [[UIImage imageNamed:@"papasscode_failed_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, FAILED_LCAP, 0, FAILED_RCAP)];
     failedImageView = [[UIImageView alloc] initWithImage:failedBg];
     failedImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
     failedImageView.hidden = YES;
-    [contentView addSubview:failedImageView];
+    [self.view addSubview:failedImageView];
     
     failedAttemptsLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     failedAttemptsLabel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
@@ -200,7 +180,7 @@
     failedAttemptsLabel.textAlignment = NSTextAlignmentCenter;
 #endif
     failedAttemptsLabel.hidden = YES;
-    [contentView addSubview:failedAttemptsLabel];
+    [self.view addSubview:failedAttemptsLabel];
     
     if ([_delegate respondsToSelector:@selector(PAPasscodeViewControllerDidCancel:)]) {
         if (_simple) {
@@ -323,7 +303,7 @@
     }
     [failedAttemptsLabel sizeToFit];
     CGFloat bgWidth = failedAttemptsLabel.bounds.size.width + FAILED_MARGIN*2;
-    CGFloat x = floor((contentView.bounds.size.width-bgWidth)/2);
+    CGFloat x = floor((self.view.bounds.size.width-bgWidth)/2);
     CGFloat y = PROMPT_HEIGHT+DIGIT_HEIGHT+floor((MESSAGE_HEIGHT-FAILED_HEIGHT)/2);
     failedImageView.frame = CGRectMake(x, y, bgWidth, FAILED_HEIGHT);
     x = failedImageView.frame.origin.x+FAILED_MARGIN;
@@ -352,12 +332,12 @@
     CGFloat dir = (newPhase > phase) ? 1 : -1;
     if (animated) {
         UIGraphicsBeginImageContext(self.view.bounds.size);
-        [contentView.layer renderInContext:UIGraphicsGetCurrentContext()];
+        [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
         UIImage *snapshot = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         snapshotImageView = [[UIImageView alloc] initWithImage:snapshot];
-        snapshotImageView.frame = CGRectOffset(snapshotImageView.frame, -contentView.frame.size.width*dir, 0);
-        [contentView addSubview:snapshotImageView];
+        snapshotImageView.frame = CGRectOffset(snapshotImageView.frame, -self.view.frame.size.width*dir, 0);
+        [self.view addSubview:snapshotImageView];
     }
     phase = newPhase;
     passcodeTextField.text = @"";
@@ -400,9 +380,9 @@
         digitImageViews[i].hidden = YES;
     }
     if (animated) {
-        contentView.frame = CGRectOffset(contentView.frame, contentView.frame.size.width*dir, 0);
+        self.view.frame = CGRectOffset(self.view.frame, self.view.frame.size.width*dir, 0);
         [UIView animateWithDuration:SLIDE_DURATION animations:^() {
-            contentView.frame = CGRectOffset(contentView.frame, -contentView.frame.size.width*dir, 0);
+            self.view.frame = CGRectOffset(self.view.frame, -self.view.frame.size.width*dir, 0);
         } completion:^(BOOL finished) {
             [snapshotImageView removeFromSuperview];
             snapshotImageView = nil;
